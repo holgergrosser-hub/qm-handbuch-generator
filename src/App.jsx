@@ -111,6 +111,7 @@ function App() {
     has_development: false, // VORAUSWAHL: NEIN!
     has_measurement: false, // VORAUSWAHL: NEIN!
     has_outsourcing: false, // VORAUSWAHL: NEIN!
+    outsourced_details: '',
     role_qmb: false, // VORAUSWAHL: NEIN!
     quality_policy_style: 'modern', // VORAUSWAHL!
     
@@ -719,7 +720,7 @@ function App() {
                     name="has_outsourcing"
                     value={false}
                     checked={!formData.has_outsourcing}
-                    onChange={(e) => setFormData(prev => ({ ...prev, has_outsourcing: false }))}
+                    onChange={(e) => setFormData(prev => ({ ...prev, has_outsourcing: false, outsourced_details: '' }))}
                   />
                   <span>Nein (Standard)</span>
                 </label>
@@ -736,6 +737,32 @@ function App() {
                 </label>
               </div>
             </div>
+
+            {/* Conditional: Welche Prozesse ausgelagert? */}
+            {formData.has_outsourcing === true && (
+              <div className="form-group conditional-field">
+                <label className="section-label">
+                  Welche Prozesse werden ausgelagert?
+                  <span className="required">*</span>
+                </label>
+                <p className="help-text">
+                  z.B. "Fertigung von Bauteilen", "IT-Support", "Logistik und Versand"
+                </p>
+                <textarea
+                  value={formData.outsourced_details || ''}
+                  onChange={(e) =>
+                    setFormData(prev => ({ ...prev, outsourced_details: e.target.value }))
+                  }
+                  placeholder="Beschreiben Sie welche Prozesse ausgelagert werden und an wen (z.B. 'Fertigung von Metallteilen an ABC GmbH')..."
+                  rows={4}
+                  maxLength={500}
+                  required
+                />
+                <span className="char-count">
+                  {formData.outsourced_details?.length || 0} / 500 Zeichen
+                </span>
+              </div>
+            )}
             
             {/* QMB */}
             <div className="form-group">
