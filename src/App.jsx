@@ -97,6 +97,8 @@ function App() {
     contact_email: '',
     contact_phone: '',
     logo_base64: null,
+    logo_mime: '',
+    logo_filename: '',
     
     // Schritt 2: Unternehmensprofil
     company_type: 'dienstleistung', // VORAUSWAHL!
@@ -221,16 +223,117 @@ function App() {
       return { ...prev, [name]: updated };
     });
   };
+
+  const compressImageToJpegBase64 = async (file, { maxDimension = 600, quality = 0.85 } = {}) => {
+    // Uses ObjectURL + Canvas to reduce memory pressure vs. huge base64 strings.
+    const objectUrl = URL.createObjectURL(file);
+    try {
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = objectUrl;
+
+      await new Promise((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error('Bild konnte nicht geladen werden.'));
+      });
+
+      const { width, height } = img;
+      const scale = Math.min(1, maxDimension / Math.max(width, height));
+      const targetWidth = Math.max(1, Math.round(width * scale));
+      const targetHeight = Math.max(1, Math.round(height * scale));
+
+      const canvas = document.createElement('canvas');
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Canvas wird nicht unterstützt.');
+      ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+      const dataUrl = canvas.toDataURL('image/jpeg', quality);
+      const commaIndex = dataUrl.indexOf(',');
+      if (commaIndex === -1) throw new Error('Komprimierung fehlgeschlagen (DataURL).');
+      return {
+        base64: dataUrl.slice(commaIndex + 1),
+        mime: 'image/jpeg',
+        filename: (file.name || 'logo').replace(/\.[^.]+$/, '') + '.jpg'
+      };
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+    }
+  };
   
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate early to avoid huge in-memory base64 strings causing crashes/reloads
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+      if (!allowedTypes.includes(file.type)) {
+        setErrors(prev => ({ ...prev, logo_base64: 'Bitte nur PNG oder JPG hochladen.' }));
+        setFormData(prev => ({ ...prev, logo_base64: null, logo_mime: '', logo_filename: '' }));
+        return;
+      }
+
+      const maxBytes = 1 * 1024 * 1024; // 1 MB
+
+      const setLogoError = (msg) => {
+        setErrors(prev => ({ ...prev, logo_base64: msg }));
+        setFormData(prev => ({ ...prev, logo_base64: null, logo_mime: '', logo_filename: '' }));
+      };
+
+      const clearLogoError = () => {
+        setErrors(prev => {
+          const next = { ...prev };
+          delete next.logo_base64;
+          return next;
+        });
+      };
+
+      // If file is large, compress it first (prevents mobile Safari/low-memory reloads)
+      if (file.size > maxBytes) {
+        (async () => {
+          try {
+            const compressed = await compressImageToJpegBase64(file, { maxDimension: 600, quality: 0.85 });
+            clearLogoError();
+            setFormData(prev => ({
+              ...prev,
+              logo_base64: compressed.base64,
+              logo_mime: compressed.mime,
+              logo_filename: compressed.filename
+            }));
+          } catch (err) {
+            setLogoError(err?.message || 'Logo konnte nicht verarbeitet werden.');
+          }
+        })();
+        return;
+      }
+
       const reader = new FileReader();
+      reader.onerror = () => {
+        setLogoError('Logo konnte nicht gelesen werden.');
+      };
       reader.onloadend = () => {
-        setFormData(prev => ({
-          ...prev,
-          logo_base64: reader.result.split(',')[1]
-        }));
+        try {
+          const result = reader.result;
+          if (typeof result !== 'string') {
+            setLogoError('Logo konnte nicht gelesen werden (unerwartetes Format).');
+            return;
+          }
+          const commaIndex = result.indexOf(',');
+          if (commaIndex === -1) {
+            setLogoError('Logo konnte nicht gelesen werden (DataURL).');
+            return;
+          }
+
+          clearLogoError();
+          setFormData(prev => ({
+            ...prev,
+            logo_base64: result.slice(commaIndex + 1),
+            logo_mime: file.type,
+            logo_filename: file.name
+          }));
+        } catch (err) {
+          setLogoError(err?.message || 'Logo konnte nicht verarbeitet werden.');
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -475,9 +578,11 @@ function App() {
                   type="file"
                   accept="image/*"
                   onChange={handleLogoUpload}
+                  className={errors.logo_base64 ? 'error' : ''}
                 />
                 {formData.logo_base64 && <span className="file-uploaded">✓ Logo hochgeladen</span>}
-                <small>Wird auf dem Deckblatt eingefügt</small>
+                {errors.logo_base64 && <span className="error-text">{errors.logo_base64}</span>}
+                <small>PNG/JPG. Große Dateien werden automatisch verkleinert.</small>
               </div>
             </div>
             

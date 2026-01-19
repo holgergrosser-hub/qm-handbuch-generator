@@ -270,14 +270,11 @@ function createQMHandbuch(data) {
   
   const docCopy = template.makeCopy(fileName, outputFolder);
   const doc = DocumentApp.openById(docCopy.getId());
-  const body = doc.getBody();
   
   // 2. Alle Platzhalter ersetzen
   const replacements = buildReplacements(data);
-  
-  for (const [placeholder, value] of Object.entries(replacements)) {
-    body.replaceText(placeholder, value || '');
-  }
+
+  replacePlaceholdersInDocument_(doc, replacements);
   
   // 3. Logo einfügen (falls vorhanden)
   if (data.logo_base64) {
@@ -407,25 +404,43 @@ function insertLogo(doc, base64Data) {
     const logoFolder = DriveApp.getFolderById(CONFIG.LOGO_FOLDER_ID);
     const logoFile = logoFolder.createFile(blob);
     
-    // In Dokument einfügen
-    const body = doc.getBody();
-    const logoPlaceholder = body.findText('{{LOGO}}');
-    
-    if (logoPlaceholder) {
+    // In Dokument einfügen (Body, Header, Footer)
+    const containers = [
+      doc.getBody(),
+      safeGetHeader_(doc),
+      safeGetFooter_(doc)
+    ].filter(Boolean);
+
+    let inserted = false;
+    for (const container of containers) {
+      const logoPlaceholder = container.findText('{{LOGO}}');
+      if (!logoPlaceholder) continue;
+
       const element = logoPlaceholder.getElement();
-      const parent = element.getParent();
-      
-      if (parent.getType() === DocumentApp.ElementType.PARAGRAPH) {
+      let parent = element.getParent();
+
+      // In Templates kann der Text in Tabellen/anderen Elementen stecken → bis zum Absatz hochlaufen
+      while (parent && parent.getType && parent.getType() !== DocumentApp.ElementType.PARAGRAPH) {
+        parent = parent.getParent && parent.getParent();
+      }
+
+      if (parent && parent.getType && parent.getType() === DocumentApp.ElementType.PARAGRAPH) {
         const para = parent.asParagraph();
         para.clear();
-        
+
         // Bild einfügen (max 200px breit)
         const image = para.appendInlineImage(logoFile.getBlob());
         image.setWidth(200);
-        
+
         // Zentrieren
         para.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+        inserted = true;
+        break;
       }
+    }
+
+    if (!inserted) {
+      Logger.log('LOGO Platzhalter nicht gefunden (weder Body noch Header/Footer)');
     }
     
     Logger.log('Logo erfolgreich eingefügt');
@@ -450,6 +465,46 @@ function convertToPDF(docFile) {
   pdfFile.setName(pdfName);
   
   return pdfFile;
+}
+
+// ============================================================================
+// HELPER: Platzhalter auch in Header/Footer ersetzen
+// ============================================================================
+
+function replacePlaceholdersInDocument_(doc, replacements) {
+  const body = doc.getBody();
+  const header = safeGetHeader_(doc);
+  const footer = safeGetFooter_(doc);
+
+  for (const [placeholder, value] of Object.entries(replacements)) {
+    const searchPattern = escapeForDocsReplaceText_(placeholder);
+    const replacement = value || '';
+
+    body.replaceText(searchPattern, replacement);
+    if (header) header.replaceText(searchPattern, replacement);
+    if (footer) footer.replaceText(searchPattern, replacement);
+  }
+}
+
+function safeGetHeader_(doc) {
+  try {
+    return doc.getHeader();
+  } catch (e) {
+    return null;
+  }
+}
+
+function safeGetFooter_(doc) {
+  try {
+    return doc.getFooter();
+  } catch (e) {
+    return null;
+  }
+}
+
+function escapeForDocsReplaceText_(text) {
+  // DocumentApp.replaceText nutzt Regex-Suchmuster. Wir escapen daher alle Sonderzeichen.
+  return String(text).replace(/[\\.^$|?*+()[\]{}]/g, '\\$&');
 }
 
 // ============================================================================
