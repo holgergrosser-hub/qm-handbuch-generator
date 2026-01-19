@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QM-Handbuch Generator - Quick Start</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #0066cc;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        h2 {
+            color: #0066cc;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        h3 {
+            color: #004a99;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #0066cc;
+            border-radius: 4px;
+        }
+        
+        .step-number {
+            display: inline-block;
+            background: #0066cc;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        pre code {
+            padding: 0;
+            background: none;
+        }
+        
+        .success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+        }
+        
+        ul {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        .timeline {
+            margin: 30px 0;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: -30px;
+            width: 2px;
+            background: #e0e0e0;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #0066cc;
+        }
+        
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #0066cc;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 10px 10px 10px 0;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #004a99;
+            text-decoration: none;
+        }
+        
+        .checklist {
+            list-style: none;
+            margin-left: 0;
+        }
+        
+        .checklist li::before {
+            content: '☐ ';
+            font-size: 1.2em;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 QM-Handbuch Generator</h1>
+        <p class="subtitle">In 15 Minuten von Null auf Live - Vollständiger Quick Start Guide</p>
+        
+        <div class="step success">
+            <h3>📋 Was du brauchst</h3>
+            <ul class="checklist">
+                <li>Google Account (für Drive & Apps Script)</li>
+                <li>GitHub Account (kostenlos)</li>
+                <li>Netlify Account (kostenlos)</li>
+                <li>Visual Studio Code (optional, für lokale Entwicklung)</li>
+            </ul>
+        </div>
+
+        <h2>⏱️ 15-Minuten Deployment</h2>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="step">
+                    <h3><span class="step-number">1</span> Google Apps Script (5 Min)</h3>
+                    
+                    <h4>1.1 Script erstellen</h4>
+                    <ol>
+                        <li>Öffne <a href="https://script.google.com" target="_blank">script.google.com</a></li>
+                        <li>Klicke "Neues Projekt"</li>
+                        <li>Benenne es "QM-Handbuch-Generator"</li>
+                        <li>Kopiere Inhalt von <code>google-apps-script.gs</code> rein</li>
+                    </ol>
+
+                    <h4>1.2 Google Drive Ordner</h4>
+                    <ol>
+                        <li>Öffne <a href="https://drive.google.com" target="_blank">drive.google.com</a></li>
+                        <li>Erstelle Ordner "QM-Templates"</li>
+                        <li>Erstelle Ordner "QM-Output"</li>
+                        <li>Erstelle Ordner "QM-Logos"</li>
+                        <li>Kopiere jeweils die ID aus der URL</li>
+                    </ol>
+
+                    <h4>1.3 Template erstellen</h4>
+                    <ol>
+                        <li>Erstelle Google Doc "QM-Handbuch-Template"</li>
+                        <li>Füge Platzhalter ein (siehe TEMPLATE_ANLEITUNG.md)</li>
+                        <li>Kopiere Dokument-ID</li>
+                    </ol>
+
+                    <h4>1.4 CONFIG anpassen</h4>
+                    <pre><code>const CONFIG = {
+  TEMPLATE_FILE_ID: 'DEINE_DOC_ID',
+  OUTPUT_FOLDER_ID: 'DEIN_OUTPUT_ORDNER_ID',
+  LOGO_FOLDER_ID: 'DEIN_LOGO_ORDNER_ID',
+  ADMIN_EMAIL: 'holger.grosser@iso9001.info',
+  ...
+};</code></pre>
+
+                    <h4>1.5 Deployen</h4>
+                    <ol>
+                        <li>Klicke "Bereitstellen" → "Neue Bereitstellung"</li>
+                        <li>Typ: Web-App</li>
+                        <li>Zugriff: <strong>Jeder</strong> ⚠️</li>
+                        <li>Kopiere die URL</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="step">
+                    <h3><span class="step-number">2</span> GitHub Repository (3 Min)</h3>
+                    
+                    <h4>2.1 Repo erstellen</h4>
+                    <ol>
+                        <li>Öffne <a href="https://github.com/new" target="_blank">github.com/new</a></li>
+                        <li>Name: <code>qm-handbuch-generator</code></li>
+                        <li>Public oder Private</li>
+                        <li>Klicke "Create repository"</li>
+                    </ol>
+
+                    <h4>2.2 Code hochladen</h4>
+                    <p><strong>Option A: Visual Studio Code</strong></p>
+                    <pre><code>git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/DEIN_USERNAME/qm-handbuch-generator.git
+git push -u origin main</code></pre>
+
+                    <p><strong>Option B: GitHub Desktop</strong></p>
+                    <ol>
+                        <li>Add Local Repository</li>
+                        <li>Publish repository</li>
+                    </ol>
+
+                    <p><strong>Option C: ZIP Upload</strong></p>
+                    <ol>
+                        <li>Alle Dateien zippen</li>
+                        <li>Auf GitHub hochladen</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="step">
+                    <h3><span class="step-number">3</span> Netlify Deployment (7 Min)</h3>
+                    
+                    <h4>3.1 Site erstellen</h4>
+                    <ol>
+                        <li>Öffne <a href="https://app.netlify.com" target="_blank">app.netlify.com</a></li>
+                        <li>"Add new site" → "Import an existing project"</li>
+                        <li>Wähle "GitHub"</li>
+                        <li>Autorisiere Netlify</li>
+                        <li>Wähle dein Repo</li>
+                    </ol>
+
+                    <h4>3.2 Build Settings</h4>
+                    <pre><code>Build command: npm install && npm run build
+Publish directory: dist</code></pre>
+
+                    <h4>3.3 Environment Variable</h4>
+                    <ol>
+                        <li>"Site settings" → "Environment variables"</li>
+                        <li>"Add a variable"</li>
+                        <li>Key: <code>VITE_GOOGLE_SCRIPT_URL</code></li>
+                        <li>Value: Deine Apps Script URL</li>
+                        <li>Save</li>
+                    </ol>
+
+                    <h4>3.4 Deploy!</h4>
+                    <ol>
+                        <li>Klicke "Deploy site"</li>
+                        <li>Warte 2-3 Minuten</li>
+                        <li>🎉 LIVE!</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="step success">
+            <h3>✅ FERTIG! Jetzt testen:</h3>
+            <ol>
+                <li>Öffne deine Netlify URL</li>
+                <li>Fülle das Formular aus</li>
+                <li>Prüfe deine Email</li>
+                <li>Download Word & PDF</li>
+            </ol>
+        </div>
+
+        <h2>🔧 Fehlerbehebung</h2>
+
+        <div class="step warning">
+            <h3>Problem: CORS Error</h3>
+            <p><strong>Lösung:</strong> Apps Script Deployment prüfen</p>
+            <ol>
+                <li>Bereitstellungen verwalten</li>
+                <li>Prüfe: "Zugriff haben" = Jeder</li>
+                <li>Falls falsch: Neue Bereitstellung</li>
+            </ol>
+        </div>
+
+        <div class="step warning">
+            <h3>Problem: Keine Email</h3>
+            <p><strong>Mögliche Ursachen:</strong></p>
+            <ul>
+                <li>Email-Adresse im Formular falsch</li>
+                <li>Spam-Ordner prüfen</li>
+                <li>Apps Script Logs prüfen (Ansicht → Logs)</li>
+            </ul>
+        </div>
+
+        <div class="step warning">
+            <h3>Problem: Template nicht gefunden</h3>
+            <p><strong>Lösung:</strong></p>
+            <ol>
+                <li>TEMPLATE_FILE_ID in CONFIG prüfen</li>
+                <li>Dokument in Drive vorhanden?</li>
+                <li>Script hat Zugriffsrechte?</li>
+            </ol>
+        </div>
+
+        <h2>📚 Nächste Schritte</h2>
+
+        <div class="step info">
+            <h3>Empfohlene Optimierungen:</h3>
+            <ul>
+                <li>Custom Domain einrichten (z.B. qm-handbuch.qm-guru.de)</li>
+                <li>Google Analytics hinzufügen</li>
+                <li>Logo-Upload testen</li>
+                <li>Email-Template anpassen</li>
+                <li>Logging in Google Sheets aktivieren</li>
+                <li>UTM-Parameter für Marketing tracking</li>
+            </ul>
+        </div>
+
+        <h2>🎯 Wichtige Links</h2>
+
+        <div style="margin: 30px 0;">
+            <a href="https://script.google.com" class="btn" target="_blank">Google Apps Script</a>
+            <a href="https://drive.google.com" class="btn" target="_blank">Google Drive</a>
+            <a href="https://github.com" class="btn" target="_blank">GitHub</a>
+            <a href="https://app.netlify.com" class="btn" target="_blank">Netlify</a>
+        </div>
+
+        <h2>📖 Dokumentation</h2>
+
+        <ul>
+            <li><strong>README.md</strong> - Vollständige Dokumentation</li>
+            <li><strong>TEMPLATE_ANLEITUNG.md</strong> - Template-Erstellung</li>
+            <li><strong>google-apps-script.gs</strong> - Backend Code</li>
+            <li><strong>src/App.jsx</strong> - Frontend Code</li>
+        </ul>
+
+        <h2>💬 Support</h2>
+
+        <p>Bei Fragen oder Problemen:</p>
+        <ul>
+            <li>Email: <a href="mailto:holger.grosser@iso9001.info">holger.grosser@iso9001.info</a></li>
+            <li>Website: <a href="https://qm-guru.de">qm-guru.de</a></li>
+        </ul>
+
+        <div class="step success" style="margin-top: 40px;">
+            <h3>🎉 Viel Erfolg mit deinem QM-Handbuch Generator!</h3>
+            <p>Du hast jetzt ein vollautomatisches System, das professionelle QM-Handbücher erstellt und direkt per Email versendet - inklusive Marketing-CTAs zu QM-Guru und OnlineCert!</p>
+        </div>
+    </div>
+</body>
+</html>
