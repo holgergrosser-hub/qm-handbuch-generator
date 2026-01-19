@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './App-MultiStep.css';
+import './App.css';
 
 // ============================================================================
 // UX-KOMPONENTEN - "DAS REICHT"-SIGNALE
