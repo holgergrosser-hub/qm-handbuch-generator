@@ -121,6 +121,7 @@ function App() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [errorDetail, setErrorDetail] = useState('');
 
   // Textbausteine für Scope
   const SCOPE_TEMPLATES = {
@@ -243,26 +244,69 @@ function App() {
     
     setLoading(true);
     setMessage('');
+    setErrorDetail('');
     
     try {
-      const response = await fetch(import.meta.env.VITE_GOOGLE_SCRIPT_URL, {
+      const scriptUrl = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
+      if (!scriptUrl) {
+        setMessage('error');
+        setErrorDetail('Backend-URL fehlt: VITE_GOOGLE_SCRIPT_URL ist nicht gesetzt.');
+        return;
+      }
+
+      // Backward-compatible Payload (unterstützt alte + optimierte Apps-Script Version)
+      const payload = {
+        ...formData,
+
+        // Legacy keys (google-apps-script.gs)
+        firmenname: formData.company_name,
+        email: formData.contact_email,
+        telefon: formData.contact_phone,
+        ansprechpartner: formData.contact_person,
+        standort: [formData.company_city, formData.company_country].filter(Boolean).join(', '),
+        mitarbeiteranzahl: formData.employee_count,
+        branche: formData.company_type,
+        kundengruppen: Array.isArray(formData.customer_groups) ? formData.customer_groups.join(', ') : formData.customer_groups,
+        geltungsbereich: formData.scope_text,
+        hat_entwicklung: formData.has_development,
+        hat_pruefmittel: formData.has_measurement,
+        ist_dienstleister: formData.has_outsourcing
+      };
+
+      const response = await fetch(scriptUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       });
-      
-      const result = await response.json();
-      
-      if (result.success) {
+
+      const contentType = response.headers.get('content-type') || '';
+      let result;
+      if (contentType.includes('application/json')) {
+        result = await response.json();
+      } else {
+        const text = await response.text();
+        throw new Error(
+          `Backend-Antwort ist nicht JSON (HTTP ${response.status}). ` +
+            `Prüfe Apps Script Deployment (Zugriff: Jeder) und URL. Antwort: ${text.slice(0, 200)}`
+        );
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.error || result?.message || `HTTP ${response.status}`);
+      }
+
+      if (result?.success) {
         setMessage('success');
       } else {
         setMessage('error');
+        setErrorDetail(result?.error || result?.message || 'Unbekannter Fehler im Backend.');
       }
     } catch (error) {
       console.error('Fehler:', error);
       setMessage('error');
+      setErrorDetail(error?.message || String(error));
     } finally {
       setLoading(false);
     }
@@ -896,6 +940,11 @@ function App() {
         <div className="message-box error">
           <h3>⚠️ Fehler</h3>
           <p>Es gab ein Problem beim Erstellen des Handbuchs. Bitte versuchen Sie es erneut oder kontaktieren Sie uns unter holger.grosser@iso9001.info</p>
+          {errorDetail && (
+            <p style={{ marginTop: '10px', fontSize: '13px', opacity: 0.9 }}>
+              <strong>Technische Details:</strong> {errorDetail}
+            </p>
+          )}
         </div>
       )}
     </div>
