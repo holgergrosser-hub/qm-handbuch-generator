@@ -273,10 +273,12 @@ function App() {
         ist_dienstleister: formData.has_outsourcing
       };
 
+      // IMPORTANT: Google Apps Script web apps often fail CORS preflight.
+      // Using a "simple" request (text/plain) avoids the OPTIONS preflight.
       const response = await fetch(scriptUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'text/plain;charset=utf-8'
         },
         body: JSON.stringify(payload)
       });
@@ -306,7 +308,14 @@ function App() {
     } catch (error) {
       console.error('Fehler:', error);
       setMessage('error');
-      setErrorDetail(error?.message || String(error));
+      const rawMessage = error?.message || String(error);
+      if (rawMessage === 'Failed to fetch') {
+        setErrorDetail(
+          'Failed to fetch (Netzwerk/CORS). Prüfe: (1) VITE_GOOGLE_SCRIPT_URL ist korrekt (endet meist auf /exec), (2) Apps Script Deployment: Zugriff = Jeder, (3) du nutzt HTTPS, (4) kein AdBlock/Tracking-Blocker, (5) Script ist erreichbar.'
+        );
+      } else {
+        setErrorDetail(rawMessage);
+      }
     } finally {
       setLoading(false);
     }
