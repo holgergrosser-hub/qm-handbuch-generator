@@ -85,6 +85,17 @@ const IntroScreen = ({ onStart }) => {
 // ============================================================================
 
 function App() {
+  const searchParams = new URLSearchParams(window.location.search);
+  const appMode = searchParams.get('app') === 'generator' ? 'generator' : 'landing';
+
+  const siteUrl = import.meta?.env?.VITE_SITE_URL || 'https://qm-handbuch.qm-guru.de';
+  const generatorUrl = import.meta?.env?.VITE_GENERATOR_URL || 'https://qm-handbuch-generator.netlify.app';
+  const expressUrl = import.meta?.env?.VITE_EXPRESS_URL || 'https://express.qm-guru.de';
+  const mainUrl = import.meta?.env?.VITE_MAIN_URL || 'https://qm-guru.de';
+  const phone = import.meta?.env?.VITE_PHONE || '';
+  const email = import.meta?.env?.VITE_EMAIL || '';
+  const whatsapp = import.meta?.env?.VITE_WHATSAPP || '';
+
   const [showIntro, setShowIntro] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -125,6 +136,351 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [errorDetail, setErrorDetail] = useState('');
+
+  if (appMode === 'landing') {
+    return (
+      <div className="min-h-screen bg-white">
+        <header className="bg-white/90 backdrop-blur border-b sticky top-0 z-50">
+          <div className="container-custom py-4 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <a href={mainUrl} className="font-extrabold text-xl text-primary-700">
+                QM-Guru
+              </a>
+              <div className="hidden md:flex items-center gap-3 pl-3 border-l border-gray-200">
+                <img
+                  src="/holger-grosser.webp"
+                  alt="Holger Grosser"
+                  className="w-10 h-10 rounded-full object-cover border-2 border-primary-600 shadow-sm"
+                  loading="lazy"
+                />
+                <div className="leading-tight">
+                  <div className="text-sm font-bold text-gray-900">Holger Grosser</div>
+                  <div className="text-xs text-gray-600">QM-Experte seit 1994</div>
+                </div>
+              </div>
+            </div>
+            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-700">
+              <a href="#generator" className="hover:text-primary-700">Generator</a>
+              <a href="#experte" className="hover:text-primary-700">Experte</a>
+              <a href="#vorlagen" className="hover:text-primary-700">Muster</a>
+              <a href="#faq" className="hover:text-primary-700">FAQ</a>
+              <a href="#services" className="hover:text-primary-700">Beratung</a>
+            </nav>
+            <div className="flex items-center gap-2">
+              <a href="?app=generator" className="btn-secondary py-2 px-4">
+                Generator öffnen
+              </a>
+              <a href={expressUrl} target="_blank" rel="noopener noreferrer" className="btn-primary py-2 px-4">
+                Express-Zertifizierung
+              </a>
+            </div>
+          </div>
+        </header>
+
+        <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-600 text-white">
+          <div className="container-custom section">
+            <div className="max-w-4xl mx-auto text-center">
+              <div className="inline-block bg-white/15 border border-white/20 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                100% kostenlos • Keine Anmeldung • Sofort-Download
+              </div>
+              <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
+                QM-Handbuch Muster kostenlos erstellen
+              </h1>
+              <p className="text-lg md:text-2xl opacity-95 mb-10">
+                Erstellen Sie ein normnahes <strong>ISO 9001:2015</strong> QM-Handbuch in wenigen Minuten –
+                als Grundlage für Ihr Qualitätsmanagement.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="?app=generator" className="btn-primary text-lg inline-flex items-center justify-center gap-2">
+                  <span>🚀</span>
+                  <span>Jetzt kostenlos erstellen</span>
+                </a>
+                <a href="#vorlagen" className="btn-secondary text-lg inline-flex items-center justify-center gap-2">
+                  <span>📋</span>
+                  <span>Muster ansehen</span>
+                </a>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 pt-10 border-t border-white/20">
+                <div>
+                  <div className="text-4xl font-extrabold">0 €</div>
+                  <div className="opacity-90">kostenlos</div>
+                </div>
+                <div>
+                  <div className="text-4xl font-extrabold">10–15</div>
+                  <div className="opacity-90">Minuten</div>
+                </div>
+                <div>
+                  <div className="text-4xl font-extrabold">ISO</div>
+                  <div className="opacity-90">9001:2015</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-gray-50 border-b">
+          <div className="container-custom py-6 flex flex-wrap justify-center gap-6 text-gray-600 text-sm">
+            <div className="flex items-center gap-2"><span className="text-green-600">✓</span><span>Normnahe Struktur</span></div>
+            <div className="flex items-center gap-2"><span className="text-green-600">✓</span><span>PDF/Word-Ausgabe</span></div>
+            <div className="flex items-center gap-2"><span className="text-green-600">✓</span><span>Ideal als Einstieg</span></div>
+          </div>
+        </section>
+
+        <section id="generator" className="section">
+          <div className="container-custom">
+            <div className="max-w-5xl mx-auto">
+              <div className="grid lg:grid-cols-2 gap-10 items-center">
+                <div>
+                  <h2 className="text-3xl md:text-4xl font-extrabold mb-4">
+                    QM-Handbuch Generator: in 3 Schritten
+                  </h2>
+                  <p className="text-gray-600 text-lg mb-8">
+                    Sie geben Firmendaten ein, wählen passende Optionen – und erhalten eine saubere Grundlage
+                    für Ihr QM-Handbuch.
+                  </p>
+                  <div className="space-y-3 text-gray-700">
+                    <div className="card"><strong>1.</strong> Firmendaten & Ansprechpartner</div>
+                    <div className="card"><strong>2.</strong> Unternehmensprofil & Geltungsbereich</div>
+                    <div className="card"><strong>3.</strong> Download als PDF/Word</div>
+                  </div>
+                  <div className="mt-8 flex flex-col sm:flex-row gap-4">
+                    <a href="?app=generator" className="btn-primary text-center">Generator starten →</a>
+                    <a href={generatorUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary text-center">
+                      Generator (separat) öffnen
+                    </a>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-3">
+                    Tipp: Bookmark {siteUrl}/?app=generator
+                  </p>
+                </div>
+
+                <div className="card border border-gray-200">
+                  <h3 className="text-xl font-bold mb-2">Für wen ist das geeignet?</h3>
+                  <p className="text-gray-600 mb-4">
+                    Für KMU, Handwerk, Dienstleister und Produktion – ideal als Startpunkt.
+                  </p>
+                  <ul className="space-y-2 text-gray-700">
+                    <li>✓ Keine ISO-Vorkenntnisse nötig</li>
+                    <li>✓ Klar strukturierte Eingaben</li>
+                    <li>✓ Ergebnis direkt nutzbar</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="vorlagen" className="section bg-gray-50">
+          <div className="container-custom">
+            <div className="max-w-5xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-extrabold mb-3">QM-Handbuch Muster & Vorlagen</h2>
+                <p className="text-gray-600 text-lg">Wählen Sie die passende Vorlage für Ihre Branche.</p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                {[ 
+                  { icon: '📘', title: 'Standard (KMU)', items: ['Alle ISO-Kapitel', 'Prozessorientiert', 'Sofort einsetzbar'] },
+                  { icon: '🏭', title: 'Produktion', items: ['Fertigung & Prüfen', 'Lieferantenmanagement', 'Lenkung von Abweichungen'] },
+                  { icon: '🛠️', title: 'Handwerk', items: ['Auftragsabwicklung', 'Material/Werkzeug', 'Kundenzufriedenheit'] },
+                  { icon: '💼', title: 'Dienstleister', items: ['Projekt/Service', 'Wissensmanagement', 'Messung & Verbesserungen'] }
+                ].map((card, idx) => (
+                  <div key={idx} className="card border border-gray-200">
+                    <div className="flex items-start gap-4">
+                      <div className="text-4xl">{card.icon}</div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold mb-2">{card.title}</h3>
+                        <ul className="space-y-1 text-gray-700">
+                          {card.items.map((it, i) => (
+                            <li key={i} className="flex items-center gap-2"><span className="text-green-600">✓</span><span>{it}</span></li>
+                          ))}
+                        </ul>
+                        <div className="mt-4">
+                          <a href="?app=generator" className="text-primary-700 font-bold hover:underline">Jetzt erstellen →</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="experte" className="section bg-gradient-to-br from-gray-50 via-white to-gray-50">
+          <div className="container-custom">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-12">
+                <div className="inline-block bg-primary-100 text-primary-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+                  Ihr QM-Experte
+                </div>
+                <h2 className="text-3xl md:text-4xl font-extrabold mb-3">Qualitätsmanagement mit Erfahrung seit 1994</h2>
+                <p className="text-gray-600 text-lg">Pragmatisch, auditfest, ohne Bürokratie.</p>
+              </div>
+
+              <div className="grid lg:grid-cols-2 gap-10 items-center">
+                <div className="order-2 lg:order-1">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary-600 to-primary-700 rounded-2xl rotate-2" />
+                    <img
+                      src="/holger-grosser.webp"
+                      alt="Holger Grosser – QM-Berater und Auditor seit 1994"
+                      className="relative rounded-2xl shadow-2xl w-full object-cover"
+                      loading="lazy"
+                    />
+                    <div className="absolute -bottom-5 -right-5 bg-white rounded-xl shadow-xl p-4 border border-gray-200">
+                      <div className="text-3xl font-extrabold text-primary-700">30+</div>
+                      <div className="text-sm text-gray-600 font-semibold">Jahre Erfahrung</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="order-1 lg:order-2">
+                  <h3 className="text-2xl font-bold mb-4">Holger Grosser</h3>
+                  <p className="text-gray-700 text-lg leading-relaxed mb-6">
+                    Wenn Sie aus dem QM-Handbuch eine erfolgreiche Zertifizierung machen wollen, hilft Erfahrung.
+                    Ich begleite Unternehmen seit 1994 beim Aufbau von Qualitätsmanagementsystemen – vom pragmatischen
+                    Start bis zum Audit.
+                  </p>
+
+                  <div className="grid sm:grid-cols-2 gap-4 mb-8">
+                    <div className="card border border-gray-200">
+                      <div className="font-bold">Audits & Praxis</div>
+                      <div className="text-gray-600">Erfahrung aus vielen Projekten</div>
+                    </div>
+                    <div className="card border border-gray-200">
+                      <div className="font-bold">ISO 9001 Fokus</div>
+                      <div className="text-gray-600">Normnah, verständlich, umsetzbar</div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    {whatsapp ? (
+                      <a href={whatsapp} target="_blank" rel="noopener" className="btn-primary text-center">
+                        WhatsApp Beratung
+                      </a>
+                    ) : (
+                      <a href={mainUrl} target="_blank" rel="noopener noreferrer" className="btn-primary text-center">
+                        Beratung anfragen
+                      </a>
+                    )}
+                    <a href="#services" className="btn-secondary text-center">Leistungen ansehen</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="faq" className="section">
+          <div className="container-custom">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-10">
+                <h2 className="text-3xl md:text-4xl font-extrabold mb-3">Häufige Fragen</h2>
+                <p className="text-gray-600 text-lg">Kurz beantwortet – damit Sie sofort starten können.</p>
+              </div>
+              <div className="space-y-4">
+                {[
+                  {
+                    q: 'Was ist ein QM-Handbuch?',
+                    a: 'Das QM-Handbuch ist das zentrale Dokument Ihres Qualitätsmanagementsystems. Es beschreibt Struktur, Verantwortlichkeiten und verweist auf Prozesse/Nachweise.'
+                  },
+                  {
+                    q: 'Ist der Generator kostenlos?',
+                    a: 'Ja. Sie können die Inhalte erstellen und als PDF/Word exportieren.'
+                  },
+                  {
+                    q: 'Ist das ISO 9001:2015 konform?',
+                    a: 'Die Struktur orientiert sich an ISO 9001:2015. Für eine erfolgreiche Zertifizierung sind zusätzlich gelebte Prozesse und Nachweise wichtig.'
+                  }
+                ].map((faq, idx) => (
+                  <details key={idx} className="rounded-lg border border-gray-200 bg-white p-5">
+                    <summary className="font-bold cursor-pointer">{faq.q}</summary>
+                    <p className="text-gray-700 mt-3">{faq.a}</p>
+                  </details>
+                ))}
+              </div>
+
+              {(whatsapp || email || phone) && (
+                <div className="mt-10 card border border-primary-200 bg-primary-50">
+                  <h3 className="text-xl font-bold mb-2">Noch Fragen?</h3>
+                  <p className="text-gray-700 mb-5">Kostenlos und unverbindlich: kurz schreiben oder anrufen.</p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    {whatsapp && (
+                      <a href={whatsapp} target="_blank" rel="noopener" className="btn-primary text-center">WhatsApp</a>
+                    )}
+                    {email && (
+                      <a href={`mailto:${email}`} className="btn-secondary text-center">E-Mail</a>
+                    )}
+                    {phone && (
+                      <a href={`tel:${phone}`} className="btn-secondary text-center">Anrufen</a>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        <section id="services" className="section bg-gray-900 text-white">
+          <div className="container-custom">
+            <div className="max-w-5xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-extrabold mb-3">Beratung & Zertifizierung</h2>
+                <p className="opacity-90 text-lg">Vom Muster zur erfolgreichen ISO 9001 Zertifizierung.</p>
+              </div>
+
+              <div className="grid lg:grid-cols-3 gap-6">
+                <div className="bg-white text-gray-900 rounded-xl p-6 shadow-xl flex flex-col">
+                  <div className="text-4xl mb-3">📘</div>
+                  <h3 className="text-xl font-bold mb-2">Generator</h3>
+                  <p className="text-gray-600 mb-6">Kostenlos starten – perfekte Grundlage.</p>
+                  <div className="mt-auto">
+                    <a href="?app=generator" className="btn-primary w-full block text-center">Starten →</a>
+                  </div>
+                </div>
+
+                <div className="bg-white text-gray-900 rounded-xl p-6 shadow-xl flex flex-col border-4 border-primary-500">
+                  <div className="text-4xl mb-3">👨‍💼</div>
+                  <h3 className="text-xl font-bold mb-2">QM-Beratung</h3>
+                  <p className="text-gray-600 mb-6">Individuelle Unterstützung: Dokumentation, Auditvorbereitung, Umsetzung.</p>
+                  <div className="mt-auto">
+                    <a href={mainUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary w-full block text-center">
+                      Beratung anfragen →
+                    </a>
+                  </div>
+                </div>
+
+                <div className="bg-white text-gray-900 rounded-xl p-6 shadow-xl flex flex-col">
+                  <div className="text-4xl mb-3">⚡</div>
+                  <h3 className="text-xl font-bold mb-2">Express-Zertifizierung</h3>
+                  <p className="text-gray-600 mb-6">Komplettpaket für schnelle Ergebnisse – ideal für Ausschreibungen.</p>
+                  <div className="mt-auto">
+                    <a href={expressUrl} target="_blank" rel="noopener noreferrer" className="btn-primary w-full block text-center">
+                      Jetzt zertifizieren →
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <footer className="bg-gray-950 text-gray-300">
+          <div className="container-custom py-10 flex flex-col md:flex-row justify-between gap-4">
+            <div className="text-sm">
+              © {new Date().getFullYear()} QM-Guru • Holger Grosser
+            </div>
+            <div className="flex gap-4 text-sm">
+              <a href="/impressum" className="hover:text-white hover:underline">Impressum</a>
+              <a href="/datenschutz" className="hover:text-white hover:underline">Datenschutz</a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    );
+  }
 
   // Textbausteine für Scope
   const SCOPE_TEMPLATES = {

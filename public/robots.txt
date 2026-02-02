@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://qm-handbuch.qm-guru.de/sitemap.xml
+
+# Optional: sensible Bereiche sperren (falls jemals vorhanden)
+Disallow: /admin/
+Disallow: /private/
